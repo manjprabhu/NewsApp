@@ -1,12 +1,13 @@
 package com.mnj.news.model
 
 data class NewsModel(
-    val headLine: String,
-    val image: String?,
+    val title: String,
+    val urlToImage: String?,
     val description: String?,
     val url: String?,
-    val source: String?,
-    val time: String?,
-    val content: String?
+    val sourceName: String?,
+    val publishedAt: String?,
+    val content: String?,
+    val author:String?
 ) {
 }

@@ -22,7 +22,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
     val newsFlow: StateFlow<Status<List<NewsModel>>> = _newsFlow.asStateFlow()
 
     init {
-        getHeadLines("sports")
+        getHeadLines("technology")
     }
 
     private fun getHeadLines(category: String) {
@@ -41,10 +41,11 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
             if (newsData != null) {
 
                 response.body()?.articles?.forEach {
+
                     tempList.add(
                         NewsModel(
                             it.title, it.urlToImage, it.description, it.url,
-                            it.source.name, it.publishedAt, it.content
+                            it.source.name, it.publishedAt, it.content,it.author
                         )
                     )
                 }

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material3.MaterialTheme
@@ -15,10 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
+import com.mnj.news.model.NewsModel
 import com.mnj.news.ui.theme.NewsTheme
 import com.mnj.news.viewmodel.NewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,7 +36,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CreateNewsCategoryTab()
+                    GetHeadLines()
                 }
             }
         }
@@ -44,9 +46,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GetHeadLines(viewModel: NewsViewModel = viewModel()) {
     viewModel.newsFlow.collectAsState().let {
-        it.value.data?.forEach {
-            println("==>>> news : ${it.headLine}")
-        }
+        it.value.data?.let { it1 -> NewsList(newsList = it1) }
     }
 }
 
@@ -68,7 +68,7 @@ fun CreateNewsCategoryTab() {
         mutableStateOf(0)
     }
 
-    var pagerState = rememberPagerState(pageCount = newsCategories.size)
+    val pagerState = rememberPagerState(pageCount = newsCategories.size)
 
     LaunchedEffect(selectedTabIndex) {
         pagerState.animateScrollToPage(selectedTabIndex)
@@ -98,21 +98,16 @@ fun CreateNewsCategoryTab() {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = newsCategories[index].title)
             }
-
         }
-
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    NewsTheme {
-        Greeting("Android")
+fun NewsList(newsList: List<NewsModel>) {
+    LazyColumn {
+        itemsIndexed(items = newsList) { _, item ->
+            NewsItem(news = item)
+        }
     }
 }
+
