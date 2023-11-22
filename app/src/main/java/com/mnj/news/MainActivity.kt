@@ -3,6 +3,7 @@ package com.mnj.news
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,8 +46,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun GetHeadLines(viewModel: NewsViewModel = viewModel()) {
-    viewModel.newsFlow.collectAsState().let {
-        it.value.data?.let { it1 -> NewsList(newsList = it1) }
+    viewModel.generalNews.collectAsState().let {
+        it.value.data?.let { it1 ->
+            NewsList(newsList = it1)
+        }
     }
 }
 
@@ -79,6 +82,7 @@ fun CreateNewsCategoryTab() {
             selectedTabIndex = pagerState.currentPage
     }
 
+
     Column(modifier = Modifier.fillMaxSize()) {
         ScrollableTabRow(selectedTabIndex = selectedTabIndex) {
             newsCategories.forEachIndexed { index, newsCategory ->
@@ -95,6 +99,7 @@ fun CreateNewsCategoryTab() {
                 .fillMaxWidth()
                 .weight(1f)
         ) { index ->
+
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = newsCategories[index].title)
             }
@@ -102,12 +107,17 @@ fun CreateNewsCategoryTab() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NewsList(newsList: List<NewsModel>) {
     LazyColumn {
+        stickyHeader {
+            CreateNewsCategoryTab()
+        }
         itemsIndexed(items = newsList) { _, item ->
             NewsItem(news = item)
         }
+
     }
 }
 
