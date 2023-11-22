@@ -5,9 +5,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material.TopAppBar
@@ -19,9 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import com.mnj.news.model.NewsModel
 import com.mnj.news.ui.theme.NewsTheme
 import com.mnj.news.viewmodel.NewsViewModel
@@ -35,8 +37,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             NewsTheme {
                 // A surface container using the 'background' color from the theme
-
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -71,7 +71,11 @@ fun LauncherScreen() {
         },
         backgroundColor = MaterialTheme.colorScheme.background,
     ) {
-        Column(modifier = Modifier.fillMaxHeight()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
             GetSportsNews()
 //          ReadNews(url = "https://www.siasat.com/world-cup-mohammed-shamis-estranged-wife-hasin-jahan-stuns-fans-with-cryptic-video-2915839/\\n\")\n")
         }
@@ -79,7 +83,9 @@ fun LauncherScreen() {
 }
 
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun CreateNewsCategoryTab() {
     val newsCategories = listOf(
@@ -97,7 +103,7 @@ fun CreateNewsCategoryTab() {
         mutableStateOf(0)
     }
 
-    val pagerState = rememberPagerState(pageCount = newsCategories.size)
+    val pagerState = androidx.compose.foundation.pager.rememberPagerState()
 
     LaunchedEffect(selectedTabIndex) {
         pagerState.animateScrollToPage(selectedTabIndex)
@@ -127,13 +133,22 @@ fun CreateNewsCategoryTab() {
             }
         }
 
+
         HorizontalPager(
+            pageCount = newsCategories.size,
             state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(5f)
+                .weight(1f)
         ) { index ->
-            Text(text = newsCategories[index].title)
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = newsCategories[index].title)
+            }
+
+
         }
     }
 }
@@ -154,7 +169,6 @@ fun NewsList(newsList: List<NewsModel>) {
 }
 
 
-
 @Composable
 fun GetHeadLines(viewModel: NewsViewModel = viewModel()) {
     viewModel.generalNews.collectAsState().let {
@@ -163,7 +177,6 @@ fun GetHeadLines(viewModel: NewsViewModel = viewModel()) {
         }
     }
 }
-
 
 @Composable
 fun GetSportsNews(viewModel: NewsViewModel = viewModel()) {
