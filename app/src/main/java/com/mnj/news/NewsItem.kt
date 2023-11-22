@@ -1,9 +1,11 @@
 package com.mnj.news
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,14 +21,16 @@ import coil.compose.rememberImagePainter
 import com.mnj.news.model.NewsModel
 
 @Composable
-fun NewsItem(news: NewsModel) {
+fun NewsItem(news: NewsModel,onClick: (String) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp, 4.dp)
             .fillMaxWidth()
-            .height(120.dp),
+            .wrapContentHeight()
+            .clickable { news.url?.let { onClick(it) } },
         shape = RoundedCornerShape(8.dp),
-        elevation = 4.dp
+        elevation = 4.dp,
+        backgroundColor = MaterialTheme.colorScheme.surface
     ) {
         Surface {
             Row(

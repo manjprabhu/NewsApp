@@ -51,14 +51,15 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
 
     init {
-        getHeadLines("home")
         getHeadLines("general")
+        getSportsNews("sports")
+      /*  getHeadLines("general")
         getHeadLines("science")
         getHeadLines("health")
         getHeadLines("entertainment")
         getHeadLines("business")
         getHeadLines("technology")
-        getHeadLines("sports")
+        getHeadLines("sports")*/
 
     }
 
@@ -71,13 +72,20 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
         }
     }
 
+    private fun getSportsNews(category: String) {
+        viewModelScope.launch {
+            _sportsNews
+                .value = Status.Loading()
+            val result = repository.getHeadLines(category = category)
+            _sportsNews.value = handleNetworkResponse(result)
+        }
+    }
 
     private fun handleNetworkResponse(response: Response<NewsData>): Status<List<NewsModel>> {
         val tempList = mutableListOf<NewsModel>()
         if (response.isSuccessful) {
             val newsData = response.body()
             if (newsData != null) {
-
                 response.body()?.articles?.forEach {
 
                     tempList.add(
@@ -87,7 +95,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
                         )
                     )
                 }
-                _generalNews.value = Status.Success(tempList)
+                return Status.Success(tempList)
             }
         }
         return Status.Error(tempList, "Error")
