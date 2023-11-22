@@ -6,10 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
@@ -23,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mnj.news.model.NewsModel
 import com.mnj.news.ui.theme.NewsTheme
@@ -76,6 +74,8 @@ fun LauncherScreen() {
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
         ) {
+            CreateNewsCategoryTab()
+            Spacer(Modifier.height(5.dp))
             GetSportsNews()
 //          ReadNews(url = "https://www.siasat.com/world-cup-mohammed-shamis-estranged-wife-hasin-jahan-stuns-fans-with-cryptic-video-2915839/\\n\")\n")
         }
@@ -106,7 +106,8 @@ fun CreateNewsCategoryTab() {
     val pagerState = androidx.compose.foundation.pager.rememberPagerState()
 
     LaunchedEffect(selectedTabIndex) {
-        pagerState.animateScrollToPage(selectedTabIndex)
+
+       pagerState.animateScrollToPage(selectedTabIndex)
     }
 
     LaunchedEffect(pagerState.currentPage) {
@@ -114,7 +115,7 @@ fun CreateNewsCategoryTab() {
     }
 
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.height(50.dp)) {
         ScrollableTabRow(
             selectedTabIndex = selectedTabIndex,
             backgroundColor = MaterialTheme.colorScheme.background
@@ -133,13 +134,11 @@ fun CreateNewsCategoryTab() {
             }
         }
 
-
         HorizontalPager(
             pageCount = newsCategories.size,
             state = pagerState,
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+                .fillMaxHeight()
         ) { index ->
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -147,8 +146,6 @@ fun CreateNewsCategoryTab() {
             ) {
                 Text(text = newsCategories[index].title)
             }
-
-
         }
     }
 }
@@ -157,9 +154,9 @@ fun CreateNewsCategoryTab() {
 @Composable
 fun NewsList(newsList: List<NewsModel>) {
     LazyColumn {
-        stickyHeader {
+     /*   stickyHeader {
             CreateNewsCategoryTab()
-        }
+        }*/
         itemsIndexed(items = newsList) { _, item ->
             NewsItem(news = item) {
                 println("==>> Clicked item  :${item.url}")
