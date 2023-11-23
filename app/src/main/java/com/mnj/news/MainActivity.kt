@@ -30,6 +30,7 @@ import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -106,14 +107,12 @@ fun CreateNewsCategoryTab() {
     val pagerState = androidx.compose.foundation.pager.rememberPagerState()
 
     LaunchedEffect(selectedTabIndex) {
-
-       pagerState.animateScrollToPage(selectedTabIndex)
+        pagerState.animateScrollToPage(selectedTabIndex)
     }
 
     LaunchedEffect(pagerState.currentPage) {
         selectedTabIndex = pagerState.currentPage
     }
-
 
     Column(modifier = Modifier.height(50.dp)) {
         ScrollableTabRow(
@@ -150,21 +149,24 @@ fun CreateNewsCategoryTab() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun NewsList(newsList: List<NewsModel>) {
+    var showWebView by remember { mutableStateOf(false) }
+
     LazyColumn {
-     /*   stickyHeader {
-            CreateNewsCategoryTab()
-        }*/
+        /*   stickyHeader {
+               CreateNewsCategoryTab()
+           }*/
         itemsIndexed(items = newsList) { _, item ->
             NewsItem(news = item) {
-                println("==>> Clicked item  :${item.url}")
+                showWebView = true
             }
+            if (showWebView)
+                item.url?.let { ReadNews(url = it) }
         }
     }
 }
-
 
 @Composable
 fun GetHeadLines(viewModel: NewsViewModel = viewModel()) {

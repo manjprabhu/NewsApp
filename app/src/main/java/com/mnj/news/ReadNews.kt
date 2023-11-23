@@ -12,7 +12,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun ReadNews(url:String ) {
+fun ReadNews(url: String) {
     var backEnable by remember { mutableStateOf(false) }
     var webView: WebView? = null
 
@@ -21,8 +21,8 @@ fun ReadNews(url:String ) {
         factory = { context ->
             WebView(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
                 )
                 webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
