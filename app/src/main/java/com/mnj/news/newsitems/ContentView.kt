@@ -19,8 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.mnj.news.Constants
 import com.mnj.news.NewsCategory
@@ -105,7 +109,6 @@ fun ContentView(
     }
 }
 
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabRowView(
@@ -133,19 +136,20 @@ fun TabRowView(
     Column(modifier = Modifier.height(50.dp)) {
         ScrollableTabRow(
             selectedTabIndex = pagerState.currentPage,
-            modifier = Modifier.height(50.dp),
-            backgroundColor = MaterialTheme.colorScheme.background
-
+            backgroundColor = MaterialTheme.colorScheme.background,
         ) {
             newsCategories.forEachIndexed { index, newsCategory ->
+                val isSelected = pagerState.currentPage == index
                 Tab(
                     selected = pagerState.currentPage == index,
                     onClick = {
                         selectedTabIndex = index
                     },
+                    modifier= Modifier.fillMaxSize()
                 ) {
                     Text(
                         text = newsCategory.title,
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Black,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -176,25 +180,25 @@ fun PagerView(
             ) { page ->
                 when (page) {
                     0 -> {
-                        GeneralNewsList(newsList = generalList)
+                        NewsList(newsList = generalList)
                     }
                     1 -> {
-                        GeneralNewsList(newsList = businessList)
+                        NewsList(newsList = businessList)
                     }
                     2 -> {
-                        GeneralNewsList(newsList = entertainmentList)
+                        NewsList(newsList = entertainmentList)
                     }
                     3 -> {
-                        GeneralNewsList(newsList = healthList)
+                        NewsList(newsList = healthList)
                     }
                     4 -> {
-                        GeneralNewsList(newsList = technologyList)
+                        NewsList(newsList = technologyList)
                     }
                     5 -> {
-                        GeneralNewsList(newsList = scienceList)
+                        NewsList(newsList = scienceList)
                     }
                     6 -> {
-                        GeneralNewsList(newsList = sportsList)
+                        NewsList(newsList = sportsList)
                     }
                 }
             }
@@ -204,7 +208,7 @@ fun PagerView(
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun GeneralNewsList(newsList: MutableList<NewsModel>) {
+fun NewsList(newsList: MutableList<NewsModel>) {
     var showWebView by remember { mutableStateOf(false) }
 
     LazyColumn(
@@ -216,7 +220,9 @@ fun GeneralNewsList(newsList: MutableList<NewsModel>) {
                 showWebView = true
             }
             if (showWebView)
-                item.url?.let { ReadNews(url = it) }
+                item.url?.let {
+                    ReadNews(url = it)
+                }
         }
     }
 }
