@@ -1,13 +1,12 @@
 package com.mnj.news
 
 object Constants {
-
-    const val HOME = "Home"
-    const val GENERAL = "General"
-    const val SCIENCE = "Science"
-    const val HEALTH = "Health"
-    const val ENTERTAINMENT = "Entertainment"
-    const val BUSINESS = "Business"
-    const val TECHNOLOGY = "Technology"
-    const val SPORTS = "Sports"
+    const val HOME = "home"
+    const val GENERAL = "general"
+    const val SCIENCE = "science"
+    const val HEALTH = "health"
+    const val ENTERTAINMENT = "entertainment"
+    const val BUSINESS = "business"
+    const val TECHNOLOGY = "technology"
+    const val SPORTS = "sports"
 }

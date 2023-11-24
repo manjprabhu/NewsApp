@@ -1,4 +1,4 @@
-package com.mnj.news
+package com.mnj.news.newsitems
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,11 +17,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.mnj.news.model.NewsModel
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
-fun NewsItem(news: NewsModel,onClick: (String) -> Unit) {
+fun NewsItem(news: NewsModel, onClick: (String) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp, 4.dp)

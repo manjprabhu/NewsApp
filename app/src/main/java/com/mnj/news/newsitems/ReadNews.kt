@@ -1,4 +1,4 @@
-package com.mnj.news
+package com.mnj.news.newsitems
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap

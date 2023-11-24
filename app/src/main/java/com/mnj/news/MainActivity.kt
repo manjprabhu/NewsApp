@@ -1,32 +1,19 @@
 package com.mnj.news
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.material.ScrollableTabRow
-import androidx.compose.material.Tab
-import androidx.compose.material.TopAppBar
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mnj.news.model.NewsModel
+import com.mnj.news.newsitems.ContentScreen
 import com.mnj.news.ui.theme.NewsTheme
 import com.mnj.news.viewmodel.NewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -40,148 +27,45 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LauncherScreen()
-                }
-            }
-        }
-    }
-}
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Composable
-fun LauncherScreen() {
-    androidx.compose.material.Scaffold(
-        topBar = {
-            TopAppBar(
-                backgroundColor = MaterialTheme.colorScheme.primary,
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "News",
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.headlineMedium
-                        )
+                    val viewModel: NewsViewModel = viewModel()
+
+                    val generalNews by viewModel.homeNews.collectAsState()
+                    val sportsNews by viewModel.sportsNews.collectAsState()
+
+                    val entertainmentNews by viewModel.entertainmentNews.collectAsState()
+                    val scienceNews by viewModel.scienceNews.collectAsState()
+
+                    val businessNews by viewModel.businessNews.collectAsState()
+                    val healthNews by viewModel.healthNews.collectAsState()
+
+                    val technologyNews by viewModel.technologyNews.collectAsState()
+
+                    generalNews.data?.let {
+                        entertainmentNews.data?.let { it1 ->
+                            scienceNews.data?.let { it2 ->
+                                businessNews.data?.let { it3 ->
+                                    healthNews.data?.let { it4 ->
+                                        technologyNews.data?.let { it5 ->
+                                            sportsNews.data?.let { it6 ->
+                                                ContentScreen(
+                                                    generalList = it,
+                                                    entertainmentList = it1,
+                                                    scienceList = it2,
+                                                    businessList = it3,
+                                                    healthList = it4,
+                                                    technologyList = it5,
+                                                    sportsList = it6
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            )
-        },
-        backgroundColor = MaterialTheme.colorScheme.background,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            CreateNewsCategoryTab()
-            Spacer(Modifier.height(5.dp))
-            GetSportsNews()
-//          ReadNews(url = "https://www.siasat.com/world-cup-mohammed-shamis-estranged-wife-hasin-jahan-stuns-fans-with-cryptic-video-2915839/\\n\")\n")
-        }
-    }
-}
-
-
-@OptIn(
-    ExperimentalFoundationApi::class
-)
-@Composable
-fun CreateNewsCategoryTab() {
-    val newsCategories = listOf(
-        NewsCategory(Constants.HOME.uppercase(Locale.ROOT)),
-        NewsCategory(Constants.GENERAL.uppercase(Locale.ROOT)),
-        NewsCategory(Constants.BUSINESS.uppercase(Locale.ROOT)),
-        NewsCategory(Constants.ENTERTAINMENT.uppercase(Locale.ROOT)),
-        NewsCategory(Constants.HEALTH.uppercase(Locale.ROOT)),
-        NewsCategory(Constants.TECHNOLOGY.uppercase(Locale.ROOT)),
-        NewsCategory(Constants.SCIENCE.uppercase(Locale.ROOT)),
-        NewsCategory(Constants.SPORTS.uppercase(Locale.ROOT))
-    )
-
-    var selectedTabIndex by remember {
-        mutableStateOf(0)
-    }
-
-    val pagerState = androidx.compose.foundation.pager.rememberPagerState()
-
-    LaunchedEffect(selectedTabIndex) {
-        pagerState.animateScrollToPage(selectedTabIndex)
-    }
-
-    LaunchedEffect(pagerState.currentPage) {
-        selectedTabIndex = pagerState.currentPage
-    }
-
-    Column(modifier = Modifier.height(50.dp)) {
-        ScrollableTabRow(
-            selectedTabIndex = selectedTabIndex,
-            backgroundColor = MaterialTheme.colorScheme.background
-        ) {
-            newsCategories.forEachIndexed { index, newsCategory ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = {
-                        Text(
-                            text = newsCategory.title,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    })
             }
-        }
-
-        HorizontalPager(
-            pageCount = newsCategories.size,
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxHeight()
-        ) { index ->
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = newsCategories[index].title)
-            }
-        }
-    }
-}
-
-@SuppressLint("UnrememberedMutableState")
-@Composable
-fun NewsList(newsList: List<NewsModel>) {
-    var showWebView by remember { mutableStateOf(false) }
-
-    LazyColumn {
-        /*   stickyHeader {
-               CreateNewsCategoryTab()
-           }*/
-        itemsIndexed(items = newsList) { _, item ->
-            NewsItem(news = item) {
-                showWebView = true
-            }
-            if (showWebView)
-                item.url?.let { ReadNews(url = it) }
-        }
-    }
-}
-
-@Composable
-fun GetHeadLines(viewModel: NewsViewModel = viewModel()) {
-    viewModel.generalNews.collectAsState().let {
-        it.value.data?.let { it1 ->
-            NewsList(newsList = it1)
-        }
-    }
-}
-
-@Composable
-fun GetSportsNews(viewModel: NewsViewModel = viewModel()) {
-    viewModel.sportsNews.collectAsState().let {
-        it.value.data?.let { it1 ->
-            NewsList(newsList = it1)
         }
     }
 }
