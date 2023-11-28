@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="App.starting.theme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#AFAFAF</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.News</item>
+    </style>
+</resources>
