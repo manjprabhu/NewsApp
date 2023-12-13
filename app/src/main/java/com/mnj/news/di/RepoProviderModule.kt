@@ -16,7 +16,7 @@ class RepoProviderModule {
 
     @Provides
     @Singleton
-    fun providesRepository(newsApiService: NewsApiService) : NewsRepository {
+    fun providesRepository(newsApiService: NewsApiService): NewsRepository {
         return NewsRepositoryImpl(newsApiService)
     }
 
@@ -25,5 +25,4 @@ class RepoProviderModule {
     fun providesViewModel(repo: NewsRepository): NewsViewModel {
         return NewsViewModel(repo)
     }
-
 }

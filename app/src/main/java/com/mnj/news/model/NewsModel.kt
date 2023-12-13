@@ -8,6 +8,5 @@ data class NewsModel(
     val sourceName: String?,
     val publishedAt: String?,
     val content: String?,
-    val author:String?
-) {
-}
+    val author: String?
+)
