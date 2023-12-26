@@ -22,7 +22,6 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
         MutableStateFlow(Status.Loading())
     val homeNews: StateFlow<Status<MutableList<NewsModel>>> = _homeNews.asStateFlow()
 
-
     private val _scienceNews: MutableStateFlow<Status<MutableList<NewsModel>>> =
         MutableStateFlow(Status.Loading())
     val scienceNews: StateFlow<Status<MutableList<NewsModel>>> = _scienceNews.asStateFlow()
