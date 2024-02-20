@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mnj.news.newsitems.ContentScreen
 import com.mnj.news.ui.theme.NewsTheme
@@ -39,16 +40,17 @@ class NewsActivity : ComponentActivity() {
 
                     val viewModel: NewsViewModel = viewModel()
 
-                    val generalNews by viewModel.homeNews.collectAsState()
-                    val sportsNews by viewModel.sportsNews.collectAsState()
+                    //Collects the value from flow in lifecycle-aware manner.
+                    val generalNews by viewModel.homeNews.collectAsStateWithLifecycle()
+                    val sportsNews by viewModel.sportsNews.collectAsStateWithLifecycle()
 
-                    val entertainmentNews by viewModel.entertainmentNews.collectAsState()
-                    val scienceNews by viewModel.scienceNews.collectAsState()
+                    val entertainmentNews by viewModel.entertainmentNews.collectAsStateWithLifecycle()
+                    val scienceNews by viewModel.scienceNews.collectAsStateWithLifecycle()
 
-                    val businessNews by viewModel.businessNews.collectAsState()
-                    val healthNews by viewModel.healthNews.collectAsState()
+                    val businessNews by viewModel.businessNews.collectAsStateWithLifecycle()
+                    val healthNews by viewModel.healthNews.collectAsStateWithLifecycle()
 
-                    val technologyNews by viewModel.technologyNews.collectAsState()
+                    val technologyNews by viewModel.technologyNews.collectAsStateWithLifecycle()
 
                     generalNews.data?.let {
                         entertainmentNews.data?.let { it1 ->
