@@ -21,5 +21,6 @@ class TokenInterceptor : Interceptor {
             // Retry the request with the new access token
             return chain.proceed(newRequest)
         }
+        return response
     }
 }
