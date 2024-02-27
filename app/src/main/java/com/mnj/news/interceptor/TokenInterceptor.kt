@@ -11,7 +11,7 @@ class TokenInterceptor : Interceptor {
         if (response.code == 401) {
 
             // Call the refresh token API to obtain a new access token
-            val newAccessToken: String = "sdhhgshdf" // get  new access token
+            val newAccessToken = "sdhhgshdf" // get  new access token
 
             // Create a new request with the updated access token
             val newRequest = originalRequest.newBuilder()
