@@ -20,9 +20,17 @@ class RetrofitProviderModule {
     @Provides
     @Singleton
     fun provideHttpClient(): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        return OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        return OkHttpClient.Builder().apply {
+            addInterceptor(loggingInterceptor)
+        }.build()
+
+        //another way of doing
+        //val loggingInterceptor = HttpLoggingInterceptor()
+        //loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        //  return OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
     }
 
     @Provides
