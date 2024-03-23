@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mnj.news.newsitems.ContentScreen
 import com.mnj.news.newsitems.ShowProgressIndicator
 import com.mnj.news.ui.theme.NewsTheme
 import com.mnj.news.viewmodel.NewsViewModel
@@ -67,13 +68,13 @@ class NewsActivity : ComponentActivity() {
 
                     println("==>> progress : ${uiState is UiState.Loading}")
 
-                    when (uiState) {
+                   /* when (uiState) {
                         is UiState.Loading -> ShowProgressIndicator(isShow = true)
-                        is UiState.Success -> ShowError(uiState.data)
-                        is UiState.Error -> ShowError(uiState.data)
-                    }
+                        is UiState.Success -> Unit
+                        is UiState.Error -> Unit//ShowError(uiState.data)
+                    }*/
 
-                    // ShowProgressIndicator(isShow = uiState is UiState.Loading)
+                     ShowProgressIndicator(isShow = uiState is UiState.Loading)
 
 
                     //Collects the value from flow in lifecycle-aware manner. This is recommended  way to collect flows on Android app.
@@ -95,7 +96,7 @@ class NewsActivity : ComponentActivity() {
                                     healthNews.data?.let { it4 ->
                                         technologyNews.data?.let { it5 ->
                                             sportsNews.data?.let { it6 ->
-                                                /*ContentScreen(
+                                                ContentScreen(
                                                     generalList = it,
                                                     entertainmentList = it1,
                                                     scienceList = it2,
@@ -103,7 +104,7 @@ class NewsActivity : ComponentActivity() {
                                                     healthList = it4,
                                                     technologyList = it5,
                                                     sportsList = it6
-                                                )*/
+                                                )
                                             }
                                         }
                                     }

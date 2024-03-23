@@ -70,7 +70,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
         viewModelScope.launch {
             delay(10000)
 //            _uiState.value = UiState.Error("Error in fetching the data!!!!")
-            _uiState.value = UiState.Success("Successfully fetched Data...")
+            _uiState.value = UiState.Success("Successfully fetched Data.!..")
         }
 //        getHeadLines(Constants.GENERAL)
 //        getHeadLines(Constants.SPORTS)
