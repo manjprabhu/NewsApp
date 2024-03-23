@@ -1,5 +1,6 @@
 package com.mnj.news
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -7,24 +8,34 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mnj.news.newsitems.ContentScreen
+import com.mnj.news.newsitems.ShowProgressIndicator
 import com.mnj.news.ui.theme.NewsTheme
 import com.mnj.news.viewmodel.NewsViewModel
+import com.mnj.news.viewmodel.UiState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class NewsActivity : ComponentActivity() {
 
+    @SuppressLint("RememberReturnType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -47,12 +58,30 @@ class NewsActivity : ComponentActivity() {
                         newsViewModel.getHeadLines()
                     }
 
+                    val progress by newsViewModel.progress.collectAsStateWithLifecycle()
+
+//                    val uiState = newsViewModel.state.collectAsStateWithLifecycle().value
+
+                     val uiState = newsViewModel.state.value
+
+
+                    println("==>> progress : ${uiState is UiState.Loading}")
+
+                    when (uiState) {
+                        is UiState.Loading -> ShowProgressIndicator(isShow = true)
+                        is UiState.Success -> ShowError(uiState.data)
+                        is UiState.Error -> ShowError(uiState.data)
+                    }
+
+                    // ShowProgressIndicator(isShow = uiState is UiState.Loading)
+
+
                     //Collects the value from flow in lifecycle-aware manner. This is recommended  way to collect flows on Android app.
                     val generalNews by newsViewModel.homeNews.collectAsStateWithLifecycle()
                     val sportsNews by newsViewModel.sportsNews.collectAsStateWithLifecycle()
 
                     val entertainmentNews by newsViewModel.entertainmentNews.collectAsStateWithLifecycle()
-                     val scienceNews by newsViewModel.scienceNews.collectAsStateWithLifecycle()
+                    val scienceNews by newsViewModel.scienceNews.collectAsStateWithLifecycle()
 
                     val businessNews by newsViewModel.businessNews.collectAsStateWithLifecycle()
                     val healthNews by newsViewModel.healthNews.collectAsStateWithLifecycle()
@@ -66,7 +95,7 @@ class NewsActivity : ComponentActivity() {
                                     healthNews.data?.let { it4 ->
                                         technologyNews.data?.let { it5 ->
                                             sportsNews.data?.let { it6 ->
-                                                ContentScreen(
+                                                /*ContentScreen(
                                                     generalList = it,
                                                     entertainmentList = it1,
                                                     scienceList = it2,
@@ -74,7 +103,7 @@ class NewsActivity : ComponentActivity() {
                                                     healthList = it4,
                                                     technologyList = it5,
                                                     sportsList = it6
-                                                )
+                                                )*/
                                             }
                                         }
                                     }
@@ -101,6 +130,22 @@ class NewsActivity : ComponentActivity() {
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
             else -> false
         }
+    }
+}
+
+@Composable
+fun ShowError(text: String) {
+    println("==>>> ShowError : $text")
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            text = text,
+            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Color.Green, fontStyle = FontStyle.Italic)
+        )
     }
 }
 

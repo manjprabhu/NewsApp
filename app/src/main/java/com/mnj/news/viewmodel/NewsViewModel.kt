@@ -1,5 +1,7 @@
 package com.mnj.news.viewmodel
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mnj.news.Constants
@@ -8,6 +10,7 @@ import com.mnj.news.model.NewsModel
 import com.mnj.news.model.Status
 import com.mnj.news.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,19 +50,35 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
         MutableStateFlow(Status.Loading())
     val sportsNews: StateFlow<Status<MutableList<NewsModel>>> = _sportsNews.asStateFlow()
 
+    private val _progress: MutableStateFlow<Status<Boolean>> =
+        MutableStateFlow(Status.Loading())
+    val progress: StateFlow<Status<Boolean>> = _progress.asStateFlow()
 
-    init {
 
-    }
+    private var default: UiState = UiState.Loading
+    private val _uiState = mutableStateOf(default)
+    val state: State<UiState> = _uiState
 
-    public fun getHeadLines() {
-        getHeadLines(Constants.GENERAL)
-        getHeadLines(Constants.SPORTS)
-        getHeadLines(Constants.SCIENCE)
-        getHeadLines(Constants.TECHNOLOGY)
-        getHeadLines(Constants.ENTERTAINMENT)
-        getHeadLines(Constants.BUSINESS)
-        getHeadLines(Constants.HEALTH)
+//    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
+//    val state = _uiState.asStateFlow()
+
+
+    fun getHeadLines() {
+
+        _uiState.value = UiState.Loading
+
+        viewModelScope.launch {
+            delay(10000)
+//            _uiState.value = UiState.Error("Error in fetching the data!!!!")
+            _uiState.value = UiState.Success("Successfully fetched Data...")
+        }
+//        getHeadLines(Constants.GENERAL)
+//        getHeadLines(Constants.SPORTS)
+//        getHeadLines(Constants.SCIENCE)
+//        getHeadLines(Constants.TECHNOLOGY)
+//        getHeadLines(Constants.ENTERTAINMENT)
+//        getHeadLines(Constants.BUSINESS)
+//        getHeadLines(Constants.HEALTH)
     }
 
     private fun getHeadLines(category: String) {
@@ -71,6 +90,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
                     _homeNews.value = handleNetworkResponse(result)
                 }
             }
+
             Constants.BUSINESS -> {
                 viewModelScope.launch {
                     _businessNews.value = Status.Loading()
@@ -78,6 +98,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
                     _businessNews.value = handleNetworkResponse(result)
                 }
             }
+
             Constants.ENTERTAINMENT -> {
                 viewModelScope.launch {
                     _entertainmentNews.value = Status.Loading()
@@ -85,6 +106,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
                     _entertainmentNews.value = handleNetworkResponse(result)
                 }
             }
+
             Constants.HEALTH -> {
                 viewModelScope.launch {
                     _healthNews.value = Status.Loading()
@@ -92,6 +114,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
                     _healthNews.value = handleNetworkResponse(result)
                 }
             }
+
             Constants.TECHNOLOGY -> {
                 viewModelScope.launch {
                     _technologyNews.value = Status.Loading()
@@ -99,6 +122,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
                     _technologyNews.value = handleNetworkResponse(result)
                 }
             }
+
             Constants.SCIENCE -> {
                 viewModelScope.launch {
                     _scienceNews.value = Status.Loading()
@@ -106,6 +130,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
                     _scienceNews.value = handleNetworkResponse(result)
                 }
             }
+
             Constants.SPORTS -> {
                 viewModelScope.launch {
                     _sportsNews.value = Status.Loading()
@@ -118,7 +143,11 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
     private fun handleNetworkResponse(response: Response<NewsData>): Status<MutableList<NewsModel>> {
         val tempList = mutableListOf<NewsModel>()
+        _progress.value = Status.Loading()
+
+
         if (response.isSuccessful) {
+            _uiState.value = UiState.Success("Successfully fetched Data")
             val newsData = response.body()
             if (newsData != null) {
                 response.body()?.articles?.forEach {
@@ -131,7 +160,15 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
                 }
                 return Status.Success(tempList)
             }
+        } else {
+            _uiState.value = UiState.Error("Error in fetching the data!!!!")
         }
         return Status.Error(tempList, "Error")
     }
+}
+
+sealed class UiState {
+    object Loading : UiState()
+    data class Error(var data: String) : UiState()
+    data class Success(var data: String) : UiState()
 }

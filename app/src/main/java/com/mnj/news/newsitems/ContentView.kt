@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
@@ -17,16 +18,15 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.mnj.news.Constants
 import com.mnj.news.NewsCategory
 import com.mnj.news.model.NewsModel
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -93,7 +93,7 @@ fun ContentView(
             .background(MaterialTheme.colorScheme.background)
     ) {
         TabRowView(pagerState)
-        
+
         Spacer(Modifier.height(5.dp))
 
         PagerView(
@@ -125,13 +125,7 @@ fun TabRowView(
         NewsCategory(Constants.SPORTS.uppercase(Locale.ROOT))
     )
 
-    var selectedTabIndex = rememberSaveable {
-        mutableStateOf(0)
-    }
-
-    LaunchedEffect(selectedTabIndex) {
-        pagerState.animateScrollToPage(selectedTabIndex.value)
-    }
+    val scope = rememberCoroutineScope()
 
     Column(modifier = Modifier.height(50.dp)) {
         ScrollableTabRow(
@@ -143,7 +137,9 @@ fun TabRowView(
                 Tab(
                     selected = isSelected,
                     onClick = {
-                        selectedTabIndex.value = index
+                        scope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
                     },
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -221,7 +217,7 @@ fun NewsList(newsList: MutableList<NewsModel>) {
         contentPadding = PaddingValues(horizontal = 2.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        itemsIndexed(items = newsList) { index, item ->
+        itemsIndexed(items = newsList) { _, item ->
             NewsItem(news = item) {
                 showWebView = true
             }
@@ -231,5 +227,34 @@ fun NewsList(newsList: MutableList<NewsModel>) {
                 }
         }
     }
+}
+
+@Composable
+fun ShowProgressIndicator(isShow: Boolean) {
+
+    println("==>> IsShow: $isShow")
+
+    if(!isShow)
+        return
+
+     Column(
+         modifier = Modifier.fillMaxSize(),
+         horizontalAlignment = Alignment.CenterHorizontally,
+         verticalArrangement = Arrangement.Center
+     ) {
+         CircularProgressIndicator(
+             modifier = Modifier.size(75.dp),
+             color = MaterialTheme.colorScheme.primary,
+             strokeWidth = 5.dp
+         )
+     }
+/*
+    CircularProgressIndicator(
+        modifier = Modifier
+            .progressSemantics()
+            .size(12.dp),
+        color = MaterialTheme.colorScheme.primary,
+        strokeWidth = 10.dp
+    )*/
 }
 
