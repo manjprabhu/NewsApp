@@ -17,6 +17,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -73,7 +74,7 @@ fun ContentScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ContentView(
     generalList: MutableList<NewsModel>,
@@ -92,7 +93,9 @@ fun ContentView(
             .background(MaterialTheme.colorScheme.background)
     ) {
         TabRowView(pagerState)
+        
         Spacer(Modifier.height(5.dp))
+
         PagerView(
             pagerState = pagerState,
             generalList = generalList,
@@ -122,12 +125,12 @@ fun TabRowView(
         NewsCategory(Constants.SPORTS.uppercase(Locale.ROOT))
     )
 
-    var selectedTabIndex by remember {
+    var selectedTabIndex = rememberSaveable {
         mutableStateOf(0)
     }
 
     LaunchedEffect(selectedTabIndex) {
-        pagerState.animateScrollToPage(selectedTabIndex)
+        pagerState.animateScrollToPage(selectedTabIndex.value)
     }
 
     Column(modifier = Modifier.height(50.dp)) {
@@ -138,9 +141,9 @@ fun TabRowView(
             newsCategories.forEachIndexed { index, newsCategory ->
                 val isSelected = pagerState.currentPage == index
                 Tab(
-                    selected = pagerState.currentPage == index,
+                    selected = isSelected,
                     onClick = {
-                        selectedTabIndex = index
+                        selectedTabIndex.value = index
                     },
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -179,21 +182,27 @@ fun PagerView(
                     0 -> {
                         NewsList(newsList = generalList)
                     }
+
                     1 -> {
                         NewsList(newsList = businessList)
                     }
+
                     2 -> {
                         NewsList(newsList = entertainmentList)
                     }
+
                     3 -> {
                         NewsList(newsList = healthList)
                     }
+
                     4 -> {
                         NewsList(newsList = technologyList)
                     }
+
                     5 -> {
                         NewsList(newsList = scienceList)
                     }
+
                     6 -> {
                         NewsList(newsList = sportsList)
                     }
@@ -212,7 +221,7 @@ fun NewsList(newsList: MutableList<NewsModel>) {
         contentPadding = PaddingValues(horizontal = 2.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        itemsIndexed(items = newsList) { _, item ->
+        itemsIndexed(items = newsList) { index, item ->
             NewsItem(news = item) {
                 showWebView = true
             }

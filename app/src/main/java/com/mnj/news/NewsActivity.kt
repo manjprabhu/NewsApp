@@ -6,9 +6,11 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,6 +32,9 @@ class NewsActivity : ComponentActivity() {
         if (!isNetworkAvailable(applicationContext)) {
             return
         }
+
+        val newsViewModel: NewsViewModel by viewModels()
+
         setContent {
             NewsTheme {
                 // A surface container using the 'background' color from the theme
@@ -38,19 +43,21 @@ class NewsActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    val viewModel: NewsViewModel = viewModel()
+                    LaunchedEffect(key1 = Unit) {
+                        newsViewModel.getHeadLines()
+                    }
 
-                    //Collects the value from flow in lifecycle-aware manner.
-                    val generalNews by viewModel.homeNews.collectAsStateWithLifecycle()
-                    val sportsNews by viewModel.sportsNews.collectAsStateWithLifecycle()
+                    //Collects the value from flow in lifecycle-aware manner. This is recommended  way to collect flows on Android app.
+                    val generalNews by newsViewModel.homeNews.collectAsStateWithLifecycle()
+                    val sportsNews by newsViewModel.sportsNews.collectAsStateWithLifecycle()
 
-                    val entertainmentNews by viewModel.entertainmentNews.collectAsStateWithLifecycle()
-                    val scienceNews by viewModel.scienceNews.collectAsStateWithLifecycle()
+                    val entertainmentNews by newsViewModel.entertainmentNews.collectAsStateWithLifecycle()
+                     val scienceNews by newsViewModel.scienceNews.collectAsStateWithLifecycle()
 
-                    val businessNews by viewModel.businessNews.collectAsStateWithLifecycle()
-                    val healthNews by viewModel.healthNews.collectAsStateWithLifecycle()
+                    val businessNews by newsViewModel.businessNews.collectAsStateWithLifecycle()
+                    val healthNews by newsViewModel.healthNews.collectAsStateWithLifecycle()
 
-                    val technologyNews by viewModel.technologyNews.collectAsStateWithLifecycle()
+                    val technologyNews by newsViewModel.technologyNews.collectAsStateWithLifecycle()
 
                     generalNews.data?.let {
                         entertainmentNews.data?.let { it1 ->

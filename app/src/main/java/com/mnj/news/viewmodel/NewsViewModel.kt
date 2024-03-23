@@ -49,6 +49,10 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
 
     init {
+
+    }
+
+    public fun getHeadLines() {
         getHeadLines(Constants.GENERAL)
         getHeadLines(Constants.SPORTS)
         getHeadLines(Constants.SCIENCE)
