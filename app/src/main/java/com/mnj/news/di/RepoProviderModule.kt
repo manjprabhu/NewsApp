@@ -25,4 +25,6 @@ class RepoProviderModule {
     fun providesViewModel(repo: NewsRepository): NewsViewModel {
         return NewsViewModel(repo)
     }
+
+
 }

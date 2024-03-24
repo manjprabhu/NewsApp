@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mnj.news.Constants
+import com.mnj.news.model.Location
 import com.mnj.news.model.NewsData
 import com.mnj.news.model.NewsModel
 import com.mnj.news.model.Status
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val repository: NewsRepository) : ViewModel() {
 
-    private val _homeNews: MutableStateFlow<Status<MutableList<NewsModel>>> =
+    /*private val _homeNews: MutableStateFlow<Status<MutableList<NewsModel>>> =
         MutableStateFlow(Status.Loading())
     val homeNews: StateFlow<Status<MutableList<NewsModel>>> = _homeNews.asStateFlow()
 
@@ -48,30 +49,56 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
     private val _sportsNews: MutableStateFlow<Status<MutableList<NewsModel>>> =
         MutableStateFlow(Status.Loading())
-    val sportsNews: StateFlow<Status<MutableList<NewsModel>>> = _sportsNews.asStateFlow()
+    val sportsNews: StateFlow<Status<MutableList<NewsModel>>> = _sportsNews.asStateFlow()*/
 
-    private val _progress: MutableStateFlow<Status<Boolean>> =
-        MutableStateFlow(Status.Loading())
-    val progress: StateFlow<Status<Boolean>> = _progress.asStateFlow()
+    /*
+        private val _progress: MutableStateFlow<Status<Boolean>> =
+            MutableStateFlow(Status.Loading())
+        val progress: StateFlow<Status<Boolean>> = _progress.asStateFlow()
+    */
 
+    /*    private var result: UiState = UiState.
+        private val _result = mutableStateOf(result)
+        val mResult: State<UiState> = _result*/
 
-    private var default: UiState = UiState.Loading
-    private val _uiState = mutableStateOf(default)
-    val state: State<UiState> = _uiState
+    /*
+        working
+        private val _uiState = mutableStateOf(UiState())
+        val state: State<UiState> = _uiState
+    */
+
+    /*    private var default: UiState = UiState.Loading
+        private val _uiState = mutableStateOf(default)
+        val state: State<UiState> = _uiState*/
 
 //    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
 //    val state = _uiState.asStateFlow()
 
 
+    private var default: SealedUiState = SealedUiState.Loading
+    private val _uiState = mutableStateOf(default)
+    val state: State<SealedUiState> = _uiState
+
+
     fun getHeadLines() {
 
-        _uiState.value = UiState.Loading
 
         viewModelScope.launch {
-            delay(10000)
-//            _uiState.value = UiState.Error("Error in fetching the data!!!!")
-            _uiState.value = UiState.Success("Successfully fetched Data.!..")
+            _uiState.value = SealedUiState.Loading
+            /*   delay(10000)
+   //            _uiState.value = UiState.Error("Error in fetching the data!!!!")
+               _uiState.value = UiState.Success("Successfully fetched Data.!..")*/
+            when (val data = repository.getHeadLines("")) {
+                is Status.Success -> {
+                    _uiState.value = SealedUiState.Success(data.data)
+                }
+
+                is Status.Error -> {
+                    _uiState.value = SealedUiState.Error(error = "Error in fetching data!!!!")
+                }
+            }
         }
+
 //        getHeadLines(Constants.GENERAL)
 //        getHeadLines(Constants.SPORTS)
 //        getHeadLines(Constants.SCIENCE)
@@ -81,7 +108,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 //        getHeadLines(Constants.HEALTH)
     }
 
-    private fun getHeadLines(category: String) {
+    /*private fun getHeadLines(category: String) {
         when (category) {
             Constants.GENERAL -> {
                 viewModelScope.launch {
@@ -139,36 +166,53 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
                 }
             }
         }
-    }
+    }*/
 
-    private fun handleNetworkResponse(response: Response<NewsData>): Status<MutableList<NewsModel>> {
-        val tempList = mutableListOf<NewsModel>()
-        _progress.value = Status.Loading()
+    /* private fun handleNetworkResponse(response: Response<NewsData>): Status<MutableList<NewsModel>> {
+         val tempList = mutableListOf<NewsModel>()
+         _progress.value = Status.Loading()
 
 
-        if (response.isSuccessful) {
-            _uiState.value = UiState.Success("Successfully fetched Data")
-            val newsData = response.body()
-            if (newsData != null) {
-                response.body()?.articles?.forEach {
-                    tempList.add(
-                        NewsModel(
-                            it.title, it.urlToImage, it.description, it.url,
-                            it.source.name, it.publishedAt, it.content, it.author
-                        )
-                    )
-                }
-                return Status.Success(tempList)
-            }
-        } else {
-            _uiState.value = UiState.Error("Error in fetching the data!!!!")
-        }
-        return Status.Error(tempList, "Error")
-    }
+         if (response.isSuccessful) {
+             _uiState.value = UiState.Success("Successfully fetched Data")
+             val newsData = response.body()
+             if (newsData != null) {
+                 response.body()?.articles?.forEach {
+                     tempList.add(
+                         NewsModel(
+                             it.title, it.urlToImage, it.description, it.url,
+                             it.source.name, it.publishedAt, it.content, it.author
+                         )
+                     )
+                 }
+                 return Status.Success(tempList)
+             }
+         } else {
+             _uiState.value = UiState.Error("Error in fetching the data!!!!")
+         }
+         return Status.Error(tempList, "Error")
+     }*/
 }
 
+/*
 sealed class UiState {
     object Loading : UiState()
     data class Error(var data: String) : UiState()
     data class Success(var data: String) : UiState()
+}*/
+
+data class UiState(
+    val isLoading: Boolean = false,
+    val error: String = "",
+    val result: Location? = null
+)
+
+sealed class SealedUiState {
+    object Loading : SealedUiState()
+
+    data class Error(val error: String) : SealedUiState()
+
+    data class Success(val data: Location?) : SealedUiState()
+
 }
+
