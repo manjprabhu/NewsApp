@@ -14,9 +14,11 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +32,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ContentScreen(
@@ -43,19 +46,17 @@ fun ContentScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                backgroundColor = MaterialTheme.colorScheme.primary,
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
                 title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "News",
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                    }
+                    Text(
+                        text = "News",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.headlineMedium
+                    )
                 }
             )
         },
@@ -85,7 +86,7 @@ fun ContentView(
     technologyList: MutableList<NewsModel>,
     sportsList: MutableList<NewsModel>
 ) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(pageCount = { 7 })
 
     Column(
         modifier = Modifier
@@ -171,7 +172,6 @@ fun PagerView(
     CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
         Box(modifier = Modifier.fillMaxSize()) {
             HorizontalPager(
-                pageCount = 7,
                 state = pagerState
             ) { page ->
                 when (page) {
@@ -234,19 +234,19 @@ fun ShowProgressIndicator(isShow: Boolean) {
 
     println("==>> IsShow: $isShow")
 
-    if(!isShow)
+    if (!isShow)
         return
 
-     Column(
-         modifier = Modifier.fillMaxSize(),
-         horizontalAlignment = Alignment.CenterHorizontally,
-         verticalArrangement = Arrangement.Center
-     ) {
-         CircularProgressIndicator(
-             modifier = Modifier.size(75.dp),
-             color = MaterialTheme.colorScheme.primary,
-             strokeWidth = 5.dp
-         )
-     }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(75.dp),
+            color = MaterialTheme.colorScheme.primary,
+            strokeWidth = 5.dp
+        )
+    }
 }
 
