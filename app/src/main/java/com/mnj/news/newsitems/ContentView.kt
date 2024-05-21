@@ -248,13 +248,5 @@ fun ShowProgressIndicator(isShow: Boolean) {
              strokeWidth = 5.dp
          )
      }
-/*
-    CircularProgressIndicator(
-        modifier = Modifier
-            .progressSemantics()
-            .size(12.dp),
-        color = MaterialTheme.colorScheme.primary,
-        strokeWidth = 10.dp
-    )*/
 }
 

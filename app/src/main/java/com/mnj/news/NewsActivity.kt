@@ -55,27 +55,19 @@ class NewsActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
+                    val uiState = newsViewModel.state.value
+                    println("==>> progress : ${uiState is UiState.Loading}")
+                    ShowProgressIndicator(isShow = uiState is UiState.Loading)
+
                     LaunchedEffect(key1 = Unit) {
                         newsViewModel.getHeadLines()
                     }
 
-                    val progress by newsViewModel.progress.collectAsStateWithLifecycle()
-
-//                    val uiState = newsViewModel.state.collectAsStateWithLifecycle().value
-
-                     val uiState = newsViewModel.state.value
-
-
-                    println("==>> progress : ${uiState is UiState.Loading}")
-
-                   /* when (uiState) {
-                        is UiState.Loading -> ShowProgressIndicator(isShow = true)
-                        is UiState.Success -> Unit
-                        is UiState.Error -> Unit//ShowError(uiState.data)
-                    }*/
-
-                     ShowProgressIndicator(isShow = uiState is UiState.Loading)
-
+                    /* when (uiState) {
+                         is UiState.Loading -> ShowProgressIndicator(isShow = true)
+                         is UiState.Success -> Unit
+                         is UiState.Error -> Unit//ShowError(uiState.data)
+                     }*/
 
                     //Collects the value from flow in lifecycle-aware manner. This is recommended  way to collect flows on Android app.
                     val generalNews by newsViewModel.homeNews.collectAsStateWithLifecycle()
@@ -145,7 +137,12 @@ fun ShowError(text: String) {
 
         Text(
             text = text,
-            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Color.Green, fontStyle = FontStyle.Italic)
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = Color.Green,
+                fontStyle = FontStyle.Italic
+            )
         )
     }
 }
