@@ -59,33 +59,25 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
     private val _uiState = mutableStateOf(default)
     val state: State<UiState> = _uiState
 
-//    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
-//    val state = _uiState.asStateFlow()
-
 
     fun getHeadLines() {
-
         _uiState.value = UiState.Loading
 
         viewModelScope.launch {
-            delay(10000)
-//            _uiState.value = UiState.Error("Error in fetching the data!!!!")
-            _uiState.value = UiState.Success("Successfully fetched Data.!..")
+            getHeadLines(Constants.GENERAL)
+            getHeadLines(Constants.SPORTS)
+            getHeadLines(Constants.SCIENCE)
+            getHeadLines(Constants.TECHNOLOGY)
+            getHeadLines(Constants.ENTERTAINMENT)
+            getHeadLines(Constants.BUSINESS)
+            getHeadLines(Constants.HEALTH)
         }
-//        getHeadLines(Constants.GENERAL)
-//        getHeadLines(Constants.SPORTS)
-//        getHeadLines(Constants.SCIENCE)
-//        getHeadLines(Constants.TECHNOLOGY)
-//        getHeadLines(Constants.ENTERTAINMENT)
-//        getHeadLines(Constants.BUSINESS)
-//        getHeadLines(Constants.HEALTH)
     }
 
     private fun getHeadLines(category: String) {
         when (category) {
             Constants.GENERAL -> {
                 viewModelScope.launch {
-                    _homeNews.value = Status.Loading()
                     val result = repository.getHeadLines(category = category)
                     _homeNews.value = handleNetworkResponse(result)
                 }
@@ -93,7 +85,6 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
             Constants.BUSINESS -> {
                 viewModelScope.launch {
-                    _businessNews.value = Status.Loading()
                     val result = repository.getHeadLines(category = category)
                     _businessNews.value = handleNetworkResponse(result)
                 }
@@ -101,7 +92,6 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
             Constants.ENTERTAINMENT -> {
                 viewModelScope.launch {
-                    _entertainmentNews.value = Status.Loading()
                     val result = repository.getHeadLines(category = category)
                     _entertainmentNews.value = handleNetworkResponse(result)
                 }
@@ -109,7 +99,6 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
             Constants.HEALTH -> {
                 viewModelScope.launch {
-                    _healthNews.value = Status.Loading()
                     val result = repository.getHeadLines(category = category)
                     _healthNews.value = handleNetworkResponse(result)
                 }
@@ -117,7 +106,6 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
             Constants.TECHNOLOGY -> {
                 viewModelScope.launch {
-                    _technologyNews.value = Status.Loading()
                     val result = repository.getHeadLines(category = category)
                     _technologyNews.value = handleNetworkResponse(result)
                 }
@@ -125,7 +113,6 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
             Constants.SCIENCE -> {
                 viewModelScope.launch {
-                    _scienceNews.value = Status.Loading()
                     val result = repository.getHeadLines(category = category)
                     _scienceNews.value = handleNetworkResponse(result)
                 }
@@ -133,7 +120,6 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
             Constants.SPORTS -> {
                 viewModelScope.launch {
-                    _sportsNews.value = Status.Loading()
                     val result = repository.getHeadLines(category = category)
                     _sportsNews.value = handleNetworkResponse(result)
                 }
@@ -143,8 +129,6 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
     private fun handleNetworkResponse(response: Response<NewsData>): Status<MutableList<NewsModel>> {
         val tempList = mutableListOf<NewsModel>()
-        _progress.value = Status.Loading()
-
 
         if (response.isSuccessful) {
             _uiState.value = UiState.Success("Successfully fetched Data")
