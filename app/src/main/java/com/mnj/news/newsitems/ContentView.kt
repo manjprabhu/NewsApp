@@ -60,7 +60,6 @@ fun ContentScreen(
                 }
             )
         },
-        backgroundColor = MaterialTheme.colorScheme.background,
     ) {
 
         ContentView(
@@ -112,9 +111,7 @@ fun ContentView(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TabRowView(
-    pagerState: PagerState
-) {
+fun TabRowView(pagerState: PagerState) {
 
     val newsCategories = listOf(
         NewsCategory(Constants.HOME.uppercase(Locale.ROOT)),
@@ -132,6 +129,7 @@ fun TabRowView(
         ScrollableTabRow(
             selectedTabIndex = pagerState.currentPage,
             backgroundColor = MaterialTheme.colorScheme.background,
+            edgePadding = 10.dp
         ) {
             newsCategories.forEachIndexed { index, newsCategory ->
                 val isSelected = pagerState.currentPage == index
@@ -142,13 +140,14 @@ fun TabRowView(
                             pagerState.animateScrollToPage(index)
                         }
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxHeight(),
+                    selectedContentColor = MaterialTheme.colorScheme.primary
                 ) {
                     Text(
                         text = newsCategory.title,
                         color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Black,
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
             }
@@ -166,14 +165,11 @@ fun PagerView(
     businessList: MutableList<NewsModel>,
     healthList: MutableList<NewsModel>,
     technologyList: MutableList<NewsModel>,
-    sportsList: MutableList<NewsModel>
-) {
+    sportsList: MutableList<NewsModel> ) {
 
-    CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            HorizontalPager(
-                state = pagerState
-            ) { page ->
+        Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
+            HorizontalPager(state = pagerState) { page ->
+
                 when (page) {
                     0 -> {
                         NewsList(newsList = generalList)
@@ -205,7 +201,7 @@ fun PagerView(
                 }
             }
         }
-    }
+
 }
 
 @SuppressLint("UnrememberedMutableState")
