@@ -10,7 +10,8 @@ import com.mnj.news.model.NewsModel
 import com.mnj.news.model.Status
 import com.mnj.news.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -63,14 +64,45 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
     fun getHeadLines() {
         _uiState.value = UiState.Loading
 
+        /* viewModelScope.launch {
+             getHeadLines(Constants.GENERAL)
+             getHeadLines(Constants.SPORTS)
+             getHeadLines(Constants.SCIENCE)
+             getHeadLines(Constants.TECHNOLOGY)
+             getHeadLines(Constants.ENTERTAINMENT)
+             getHeadLines(Constants.BUSINESS)
+             getHeadLines(Constants.HEALTH)
+         }*/
+        getData()
+    }
+
+
+    private fun getData() {
         viewModelScope.launch {
-            getHeadLines(Constants.GENERAL)
-            getHeadLines(Constants.SPORTS)
-            getHeadLines(Constants.SCIENCE)
-            getHeadLines(Constants.TECHNOLOGY)
-            getHeadLines(Constants.ENTERTAINMENT)
-            getHeadLines(Constants.BUSINESS)
-            getHeadLines(Constants.HEALTH)
+            coroutineScope {
+
+                val homeNews = async { repository.getHeadLines(Constants.GENERAL) }
+
+                val healthNews = async { repository.getHeadLines(Constants.HEALTH) }
+
+                val entertainmentNews = async { repository.getHeadLines(Constants.ENTERTAINMENT) }
+
+                val sportsNews = async { repository.getHeadLines(Constants.SPORTS) }
+
+                val businessNews = async { repository.getHeadLines(Constants.BUSINESS) }
+
+                val technologyNews = async { repository.getHeadLines(Constants.TECHNOLOGY) }
+
+                val scienceNews = async { repository.getHeadLines(Constants.SCIENCE) }
+
+                _homeNews.value = handleNetworkResponse(homeNews.await())
+                _businessNews.value = handleNetworkResponse(businessNews.await())
+                _entertainmentNews.value = handleNetworkResponse(entertainmentNews.await())
+                _healthNews.value = handleNetworkResponse(healthNews.await())
+                _scienceNews.value = handleNetworkResponse(scienceNews.await())
+                _sportsNews.value = handleNetworkResponse(sportsNews.await())
+                _technologyNews.value = handleNetworkResponse(technologyNews.await())
+            }
         }
     }
 
@@ -128,26 +160,26 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
     }
 
     private fun handleNetworkResponse(response: Response<NewsData>): Status<MutableList<NewsModel>> {
-        val tempList = mutableListOf<NewsModel>()
+        val resultList = mutableListOf<NewsModel>()
 
         if (response.isSuccessful) {
             _uiState.value = UiState.Success("Successfully fetched Data")
             val newsData = response.body()
             if (newsData != null) {
                 response.body()?.articles?.forEach {
-                    tempList.add(
+                    resultList.add(
                         NewsModel(
                             it.title, it.urlToImage, it.description, it.url,
                             it.source.name, it.publishedAt, it.content, it.author
                         )
                     )
                 }
-                return Status.Success(tempList)
+                return Status.Success(resultList)
             }
         } else {
             _uiState.value = UiState.Error("Error in fetching the data!!!!")
         }
-        return Status.Error(tempList, "Error")
+        return Status.Error(resultList, "Error")
     }
 }
 
