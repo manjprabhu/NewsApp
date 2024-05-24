@@ -25,8 +25,8 @@ fun ReadNews(url: String) {
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                 )
                 webViewClient = object : WebViewClient() {
-                    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                        backEnable = view!!.canGoBack()
+                    override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
+                        backEnable = view.canGoBack()
                     }
                 }
                 settings.javaScriptEnabled = true

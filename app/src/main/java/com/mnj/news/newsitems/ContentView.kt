@@ -165,42 +165,47 @@ fun PagerView(
     businessList: MutableList<NewsModel>,
     healthList: MutableList<NewsModel>,
     technologyList: MutableList<NewsModel>,
-    sportsList: MutableList<NewsModel> ) {
+    sportsList: MutableList<NewsModel>
+) {
 
-        Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
-            HorizontalPager(state = pagerState) { page ->
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+    ) {
+        HorizontalPager(state = pagerState) { page ->
 
-                when (page) {
-                    0 -> {
-                        NewsList(newsList = generalList)
-                    }
+            when (page) {
+                0 -> {
+                    NewsList(newsList = generalList)
+                }
 
-                    1 -> {
-                        NewsList(newsList = businessList)
-                    }
+                1 -> {
+                    NewsList(newsList = businessList)
+                }
 
-                    2 -> {
-                        NewsList(newsList = entertainmentList)
-                    }
+                2 -> {
+                    NewsList(newsList = entertainmentList)
+                }
 
-                    3 -> {
-                        NewsList(newsList = healthList)
-                    }
+                3 -> {
+                    NewsList(newsList = healthList)
+                }
 
-                    4 -> {
-                        NewsList(newsList = technologyList)
-                    }
+                4 -> {
+                    NewsList(newsList = technologyList)
+                }
 
-                    5 -> {
-                        NewsList(newsList = scienceList)
-                    }
+                5 -> {
+                    NewsList(newsList = scienceList)
+                }
 
-                    6 -> {
-                        NewsList(newsList = sportsList)
-                    }
+                6 -> {
+                    NewsList(newsList = sportsList)
                 }
             }
         }
+    }
 
 }
 
@@ -214,22 +219,18 @@ fun NewsList(newsList: MutableList<NewsModel>) {
         modifier = Modifier.fillMaxSize()
     ) {
         itemsIndexed(items = newsList) { _, item ->
-            NewsItem(news = item) {
-                showWebView = true
-            }
+            NewsItem(news = item, onClick = { showWebView = true })
+            /* NewsItem(news = item) {
+                 showWebView = true
+             }*/
             if (showWebView)
-                item.url?.let {
-                    ReadNews(url = it)
-                }
+                ReadNews(url = item.url)
         }
     }
 }
 
 @Composable
 fun ShowProgressIndicator(isShow: Boolean) {
-
-    println("==>> IsShow: $isShow")
-
     if (!isShow)
         return
 
